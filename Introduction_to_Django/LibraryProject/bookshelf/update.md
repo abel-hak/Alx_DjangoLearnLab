@@ -1,3 +1,3 @@
-book.title = "Nineteen Eighty-Four"
+book.title = "1984"
 book.save()
 book
