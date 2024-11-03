@@ -8,3 +8,5 @@ Command:
 ```python
 book = Book.objects.get(id=1)  # assuming id=1 is your book's id
 print(book)  # This will display all attributes of the book
+
+Book(id=1, title="1984", author="George Orwell", publication_year=1949)
