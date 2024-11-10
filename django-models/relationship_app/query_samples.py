@@ -30,12 +30,14 @@ def list_all_books_in_library(library_name):
 def get_librarian_for_library(library_name):
     try:
         library = Library.objects.get(name=library_name)
-        librarian = library.librarian  # Using the related_name 'librarian' from OneToOneField in Librarian model
+        # Using Librarian.objects.get with library as a filter
+        librarian = Librarian.objects.get(library=library)
         return librarian.name
     except Library.DoesNotExist:
         return f"No library found with name '{library_name}'"
     except Librarian.DoesNotExist:
         return f"No librarian assigned to the library '{library_name}'"
+
 
 # Sample function calls
 if __name__ == "__main__":
