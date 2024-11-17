@@ -32,3 +32,17 @@ def delete_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     # Your code for deleting a book
     return render(request, 'delete_book.html', {'book': book})
+
+def example_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # Perform your desired actions with the form data
+    else:
+        form = ExampleForm()
+
+    return render(request, 'example_form.html', {'form': form})
