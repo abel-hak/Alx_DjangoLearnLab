@@ -42,6 +42,15 @@ class CustomUser(AbstractUser):
     profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
 
     objects = CustomUserManager()
+    
+    class Meta:
+        permissions = [
+            ("can_view", "Can view content"),
+            ("can_create", "Can create content"),
+            ("can_edit", "Can edit content"),
+            ("can_delete", "Can delete content"),
+        ]
+
 
     def __str__(self):
         return self.username
