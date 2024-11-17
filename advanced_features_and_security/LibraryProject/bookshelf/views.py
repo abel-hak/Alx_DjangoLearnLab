@@ -5,6 +5,11 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, get_object_or_404
 from .models import Book
 
+@permission_required('bookshelf.view_book')
+def book_list(request):
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
 @permission_required('bookshelf.can_create', raise_exception=True)
 def create_book(request):
     # Your code for creating a book
