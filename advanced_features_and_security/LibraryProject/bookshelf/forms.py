@@ -3,6 +3,22 @@ from django.conf import settings
 
 user = settings.AUTH_USER_MODEL
 
+
+
+class ExampleForm(forms.Form):
+    # Add any fields you need for your example form
+    name = forms.CharField(max_length=100, label='Your Name')
+    email = forms.EmailField(label='Email Address')
+    message = forms.CharField(widget=forms.Textarea, label='Your Message')
+
+    # Optional: Add custom validation for any of the fields
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if len(name) < 3:
+            raise forms.ValidationError('Name must be at least 3 characters long')
+        return name
+
+
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = user
