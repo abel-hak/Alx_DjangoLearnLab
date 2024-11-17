@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)vt%@qdrg-lc6mdwf^e9+08n+%suz%du71mi=d=(&*u==#8if&
 DEBUG = True
 
 ALLOWED_HOSTS = []
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 
 
