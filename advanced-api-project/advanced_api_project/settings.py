@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',  # Added Django REST Framework
     'api',  # Added the API app
+    'django_filters',
 ]
 
 MIDDLEWARE = [
