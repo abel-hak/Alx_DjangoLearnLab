@@ -7,9 +7,8 @@ from datetime import datetime
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['id', 'title', 'publication_year', 'author']
+        fields = '__all__'
 
-    # Custom validation ensures the publication year is not in the future.
     def validate_publication_year(self, value):
         current_year = datetime.now().year
         if value > current_year:
