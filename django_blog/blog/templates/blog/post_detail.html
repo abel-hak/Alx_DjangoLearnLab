@@ -1,9 +1,15 @@
-<!-- blog/templates/blog/post_detail.html -->
-{% extends 'base_generic.html' %}
-{% block content %}
-  <h1>{{ post.title }}</h1>
-  <p>{{ post.content }}</p>
-  <p>By {{ post.author }}</p>
-  <a href="{% url 'blog:post_update' post.pk %}">Edit</a> | 
-  <a href="{% url 'blog:post_delete' post.pk %}">Delete</a>
-{% endblock %}
+{% for comment in comments %}
+    <div class="comment">
+        <p>{{ comment.content }}</p>
+        <p><small>Posted by {{ comment.author }} on {{ comment.created_at }}</small></p>
+        {% if comment.author == user %}
+            <a href="{% url 'edit_comment' pk=comment.pk %}">Edit</a>
+            <a href="{% url 'delete_comment' pk=comment.pk %}">Delete</a>
+        {% endif %}
+    </div>
+{% endfor %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Comment</button>
+</form>

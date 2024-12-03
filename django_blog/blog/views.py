@@ -79,3 +79,57 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Post, Comment
+from .forms import CommentForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import DeleteView
+
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    comments = post.comments.all()
+
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.author = request.user
+                comment.post = post
+                comment.save()
+                return redirect('post_detail', pk=post.pk)
+        else:
+            return redirect('login')
+
+    else:
+        form = CommentForm()
+
+    return render(request, 'blog/post_detail.html', {'post': post, 'comments': comments, 'form': form})
+
+@login_required
+def edit_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if comment.author != request.user:
+        return redirect('post_detail', pk=comment.post.pk)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=comment.post.pk)
+    else:
+        form = CommentForm(instance=comment)
+
+    return render(request, 'blog/edit_comment.html', {'form': form})
+
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    post = comment.post
+    if comment.author == request.user:
+        comment.delete()
+    return redirect('post_detail', pk=post.pk)
+
+
