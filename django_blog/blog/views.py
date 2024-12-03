@@ -132,4 +132,43 @@ def delete_comment(request, pk):
         comment.delete()
     return redirect('post_detail', pk=post.pk)
 
+# Create View: Allow users to create a comment
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+    
+    def form_valid(self, form):
+        # Set the post and author based on the request
+        post = get_object_or_404(Post, pk=self.kwargs['post_pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['post_pk']})
+
+# Update View: Allow users to edit their own comment
+class CommentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+    
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
+    
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+
+# Delete View: Allow users to delete their own comment
+class CommentDeleteView(LoginRequiredMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+    
+    def get_queryset(self):
+        return Comment.objects.filter(author=self.request.user)
+    
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+
 
