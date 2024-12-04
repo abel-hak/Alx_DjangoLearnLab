@@ -11,6 +11,7 @@ from .models import Post, Comment
 from taggit.models import Tag
 from django.db.models import 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 
 def register(request):
@@ -170,5 +171,22 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
     
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+
+def search_posts(request):
+    query = request.GET.get('q', '')  # Get the search query from the request
+    posts = Post.objects.filter(
+        Q(title__icontains=query) |
+        Q(content__icontains=query) |
+        Q(tags__name__icontains=query)  # Search by tags
+    ).distinct()
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
+from django.shortcuts import get_object_or_404
+from taggit.models import Tag
+
+def posts_by_tag(request, tag_slug):
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    posts = Post.objects.filter(tags__in=[tag])
+    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
 
 
