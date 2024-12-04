@@ -1,6 +1,6 @@
 from django import forms
 from .models import Post, Comment
-from taggit.forms import TagField, TagWidget
+from taggit.forms import TagWidget  # Explicitly import TagWidget
 
 
 class PostForm(forms.ModelForm):
@@ -8,7 +8,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content', 'tags']  # Include tags
         widgets = {
-            'tags': TagWidget(attrs={'placeholder': 'Add tags separated by commas'}),
+            'tags': TagWidget(),  # Explicitly use TagWidget here
         }
 
 
