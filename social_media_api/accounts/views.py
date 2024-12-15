@@ -24,21 +24,29 @@ class LoginView(APIView):
             return Response({'token': token.key})
         return Response({'error': 'Invalid credentials'}, status=400)
     
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from .models import CustomUser
+from .serializers import FollowSerializer
 
-class FollowUserView(APIView):
+class FollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()  # Ensures the queryset is defined
+    serializer_class = FollowSerializer
 
     def post(self, request, user_id):
-        user_to_follow = get_object_or_404(CustomUser, pk=user_id)
+        user_to_follow = get_object_or_404(self.get_queryset(), pk=user_id)
         request.user.follow(user_to_follow)
         return Response({'detail': f'You are now following {user_to_follow.username}'})
 
-class UnfollowUserView(APIView):
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()  # Ensures the queryset is defined
+    serializer_class = FollowSerializer
 
     def post(self, request, user_id):
-        user_to_unfollow = get_object_or_404(CustomUser, pk=user_id)
+        user_to_unfollow = get_object_or_404(self.get_queryset(), pk=user_id)
         request.user.unfollow(user_to_unfollow)
         return Response({'detail': f'You have unfollowed {user_to_unfollow.username}'})
