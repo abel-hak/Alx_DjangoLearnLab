@@ -14,11 +14,10 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
     bio = serializers.CharField()
     profile_picture = serializers.ImageField(required=False)
-    token = serializers.SerializerMethodField()  # Add token field
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'bio', 'profile_picture', 'token']
+        fields = ['username', 'password', 'bio', 'profile_picture']
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(
@@ -29,16 +28,3 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         Token.objects.create(user=user)
         return user
-
-    def get_token(self, obj):
-        # Retrieve or create the token for the registered user
-        token, _ = Token.objects.get_or_create(user=obj)
-        return token.key
-    
-from rest_framework import serializers
-from .models import CustomUser
-
-class FollowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ['id', 'username', 'followers', 'following']

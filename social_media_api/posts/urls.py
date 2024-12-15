@@ -1,8 +1,7 @@
 from django.urls import path
-from .views import FeedViewSet
+from .views import LikePostView, UnlikePostView
 
 urlpatterns = [
-    path('feed/', FeedViewSet.as_view({'get': 'list'}), name='feed'),
-       path('<int:pk>/like/', PostViewSet.as_view({'post': 'like_post'}), name='like_post'),
-    path('<int:pk>/unlike/', PostViewSet.as_view({'post': 'unlike_post'}), name='unlike_post'),
+    path('posts/<int:pk>/like/', LikePostView.as_view(), name='like-post'),
+    path('posts/<int:pk>/unlike/', UnlikePostView.as_view(), name='unlike-post'),
 ]
