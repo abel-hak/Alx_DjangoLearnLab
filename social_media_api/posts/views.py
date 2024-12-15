@@ -42,3 +42,34 @@ class UnlikePostView(generics.GenericAPIView):
 
         like.delete()
         return Response({"detail": "Post unliked."}, status=status.HTTP_200_OK)
+    
+from rest_framework import viewsets
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for CRUD operations on Post model.
+    """
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Automatically set the author to the logged-in user when creating a post
+        serializer.save(author=self.request.user)
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for CRUD operations on Comment model.
+    """
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Automatically set the author to the logged-in user when creating a comment
+        serializer.save(author=self.request.user)
+
