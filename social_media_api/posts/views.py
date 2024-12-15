@@ -73,3 +73,26 @@ class CommentViewSet(viewsets.ModelViewSet):
         # Automatically set the author to the logged-in user when creating a comment
         serializer.save(author=self.request.user)
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .models import Post
+from .serializers import PostSerializer
+
+
+class FeedView(APIView):
+    """
+    Generates a feed of posts from users the current user follows.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get the list of users the current user follows
+        following_users = request.user.following.all()  # Assumes a ManyToManyField named 'following'
+        
+        # Filter posts authored by the followed users and order them by creation date (most recent first)
+        posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        
+        # Serialize the posts and return as a response
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
