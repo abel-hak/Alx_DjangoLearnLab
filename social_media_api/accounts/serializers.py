@@ -34,3 +34,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         # Retrieve or create the token for the registered user
         token, _ = Token.objects.get_or_create(user=obj)
         return token.key
+    
+from rest_framework import serializers
+from .models import CustomUser
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'followers', 'following']
